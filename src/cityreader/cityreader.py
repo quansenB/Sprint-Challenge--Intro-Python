@@ -1,6 +1,15 @@
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, lat and lon (representing latitude and longitude).
 
+class City:
+  def __init__(self, name, lat, lon):
+    self.name=name
+    self.lat=lat
+    self.lon=lon
+
+  def __str__(self):
+    return f"{self.name} ({self.lat}/{self.lon})"
+
 
 # We have a collection of US cities with population over 750,000 stored in the
 # file "cities.csv". (CSV stands for "comma-separated values".)
@@ -16,12 +25,18 @@
 # should not be loaded into a City object.
 cities = []
 
+
 def cityreader(cities=[]):
   # TODO Implement the functionality to read from the 'cities.csv' file
   # For each city record, create a new City instance and add it to the 
   # `cities` list
+  import csv
+  with open('cities.csv') as file:
+    cityReader = csv.DictReader(file)
+    for row in cityReader:
+        cities.append(City(row["city"], float(row["lat"]), float(row["lng"])))
     
-    return cities
+  return cities
 
 cityreader(cities)
 
@@ -63,9 +78,29 @@ for c in cities:
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # within will hold the cities that fall within the specified region
   within = []
+  withinLat = []
+  lat1 = float(lat1)
+  lat2 = float(lat2)
+  lon1 = float(lon1)
+  lon2 = float(lon2)
 
   # TODO Ensure that the lat and lon valuse are all floats
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
 
-  return within
+  if type(lat1) is float and type(lat2) is float and type(lon1) is float and type(lon2) is float:
+    if lat1 < lat2:
+      withinLat = [city for city in cities if lat1 < city.lat and city.lat < lat2]
+    else:
+      withinLat = [city for city in cities if lat1 > city.lat and city.lat > lat2]
+
+    if lon1 < lon2:
+      within = [city for city in withinLat if lon1 < city.lon and city.lon < lon2]
+    else:
+      within = [city for city in withinLat if lon1 > city.lon and city.lon > lon2]
+    
+    return within
+  print("Please provide coordinates as float values only")
+  return
+
+cityreader_stretch(45, -100, 32, -120, cities)
